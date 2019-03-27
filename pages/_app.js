@@ -1,4 +1,5 @@
 import '../bootstrap.min.css'
+import Layout from '../components/CNLayout'
 import React from 'react'
 import App, { Container } from 'next/app'
 
@@ -18,7 +19,9 @@ class CNApp extends App {
 
     return (
       <Container>
-        <Component {...pageProps} />
+        <Layout navActive={this.props.router.pathname}>
+          <Component {...pageProps} />
+        </Layout>
       </Container>
     )
   }
