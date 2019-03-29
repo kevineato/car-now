@@ -1,4 +1,3 @@
-import '../bootstrap.min.css'
 import Layout from '../components/CNLayout'
 import React from 'react'
 import App, { Container } from 'next/app'

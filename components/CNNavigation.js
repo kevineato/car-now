@@ -1,4 +1,3 @@
-import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
@@ -8,12 +7,12 @@ export default function Navigation(props) {
     <Navbar collapseOnSelect expand="lg" sticky="top" bg="dark" variant="dark">
       <Navbar.Brand>
         <Link href="/">
-          <a>Car Now</a>
+          <a style={{ color: 'white' }}>Car Now</a>
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav variant="pills" defaultActiveKey={props.navActive} className="mr-auto">
+        <Nav variant="pills" activeKey={props.navActive}>
           <Link href="/">
             <Nav.Link href="/" eventKey="/">
               Home
@@ -24,9 +23,9 @@ export default function Navigation(props) {
               Browse
             </Nav.Link>
           </Link>
-          <Link href="/about">
-            <Nav.Link href="/about" eventKey="/about">
-              About
+          <Link href="/login">
+            <Nav.Link href="/login" eventKey="/login">
+              Login
             </Nav.Link>
           </Link>
         </Nav>

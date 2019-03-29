@@ -10,6 +10,22 @@ app
   .then(() => {
     const server = express()
 
+    server.get('/v/:id', async (req, res) => {
+      const actualPage = '/vehicle'
+
+      const resp = await fetch('http://localhost:3000/static/data.json')
+      const data = await resp.json()
+
+      const vehicle = JSON.stringify(data.listings[parseInt(req.params.id) - 1])
+
+      const queryParams = {
+        id: req.params.id,
+        listing: vehicle
+      }
+
+      app.render(req, res, actualPage, queryParams)
+    })
+
     server.get('*', (req, res) => {
       return handle(req, res)
     })
