@@ -40,6 +40,7 @@ class VehicleCard extends React.Component {
             <h3>{`$${listing.price}`}</h3>
           </Card.Title>
           <Card.Text>
+            <span className="text-muted">{listing.miles} miles</span>
           </Card.Text>
           <Button variant="primary">
             Buy Now
