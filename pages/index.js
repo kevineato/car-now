@@ -3,58 +3,76 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import fetch from 'isomorphic-unfetch'
+import React from 'react'
 
-export default function Index(props) {
-  return (
-    <Container>
-      <Row className="justify-content-center">
-        <Col>
-          <Carousel>
-            <Carousel.Item>
-              <a href={props.listings[0].img_url}>
-                <img
-                  className="w-100"
-                  src={props.listings[0].img_url}
-                />
-              </a>
-              <Carousel.Caption>
-                <h3>{`${props.listings[0].year} ${props.listings[0].make} ${props.listings[0].model}`}</h3>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <a href={props.listings[1].img_url}>
-                <img
-                  className="w-100"
-                  src={props.listings[1].img_url}
-                />
-              </a>
-              <Carousel.Caption>
-                <h3>{`${props.listings[1].year} ${props.listings[1].make} ${props.listings[1].model}`}</h3>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <a href={props.listings[2].img_url}>
-                <img
-                  className="w-100"
-                  src={props.listings[2].img_url}
-                />
-              </a>
-              <Carousel.Caption>
-                <h3>{`${props.listings[2].year} ${props.listings[2].make} ${props.listings[2].model}`}</h3>
-              </Carousel.Caption>
-            </Carousel.Item>
-          </Carousel>
-        </Col>
-      </Row>
-    </Container>
-  )
-}
+class Index extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { randIds: [] }
+  }
 
-Index.getInitialProps = async function() {
-  const res = await fetch('http://localhost:3000/static/data.json')
-  const data = await res.json()
+  componentDidMount() {
+    let randomIds = []
+    if (!sessionStorage.getItem("randomIds")) {
+      while (randomIds.length != 3) {
+        const id = this.randomInt(0, 49)
+        if (!randomIds.includes(id)) {
+          randomIds.push(id)
+        }
+      }
 
-  return {
-    listings: data.listings
+      sessionStorage.setItem("randomIds", randomIds.toString())
+    } else {
+      randomIds = sessionStorage.getItem("randomIds").split(",")
+    }
+
+    this.setState({ randIds: randomIds })
+  }
+
+  static async getInitialProps() {
+    const res = await fetch('http://localhost:3000/static/data.json')
+    const data = await res.json()
+
+    return {
+      listings: data.listings
+    }
+  }
+
+  randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  yearMakeModel(id) {
+    return `${this.props.listings[id].year} ${this.props.listings[id].make} ${this.props.listings[id].model}`
+  }
+
+  render () {
+
+    return (
+      <Container>
+        <Row className="justify-content-center">
+          <Col>
+            <Carousel>
+              {this.state.randIds.map((id) => (
+                <Carousel.Item>
+                  <a href={`/v/${parseInt(id) + 1}`}>
+                    <img
+                      className="w-100"
+                      src={this.props.listings[id].img_url}
+                      alt={this.yearMakeModel(id)}
+                    />
+                  </a>
+                  <Carousel.Caption>
+                    <h3>{this.yearMakeModel(id)}</h3>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          </Col>
+        </Row>
+      </Container>
+    )
   }
 }
+
+export default Index

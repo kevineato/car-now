@@ -20,8 +20,8 @@ class VehicleCard extends React.Component {
       "transmission": "Transmission"
     }
     const secondDetailCol = {
-      "exterior_color": "Exterior Color",
-      "interior_color": "Interior Color",
+      "exterior_color": "Ext. Color",
+      "interior_color": "Int. Color",
       "doors": "Doors",
       "capacity": "Capacity",
       "bed_length": "Bed Length",
@@ -30,7 +30,7 @@ class VehicleCard extends React.Component {
     }
 
     return (
-      <Card style={{ boxShadow: '7px 5px 20px' }}>
+      <Card className="my-3" style={{ boxShadow: '7px 5px 20px' }}>
         <Link as={`/v/${listing.id.toString()}`} href={`/vehicle?id=${listing.id.toString()}&listing=${JSON.stringify(listing)}`}>
           <a><Card.Img variant="top" src={listing.img_url} /></a>
         </Link>
@@ -50,9 +50,9 @@ class VehicleCard extends React.Component {
         </Card.Footer>
         <div className="collapse" id={`collapse${listing.id.toString()}`}>
           <Card.Body>
-            <Container>
+            <Container fluid={true}>
               <Row>
-                <Col md={6}>
+                <Col lg={6}>
                   <ListGroup variant="flush">
                     {Object.keys(firstDetailCol).map(function (key) {
                       if (key in listing) {
@@ -65,7 +65,7 @@ class VehicleCard extends React.Component {
                     })}
                   </ListGroup>
                 </Col>
-                <Col md={6}>
+                <Col lg={6}>
                   <ListGroup variant="flush">
                     {Object.keys(secondDetailCol).map(function (key) {
                       if (key in listing) {

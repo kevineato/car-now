@@ -1,12 +1,15 @@
-import Head from 'next/head'
 import Navigation from './CNNavigation'
+import React from 'react'
 
-export default function Layout(props) {
-  return (
-    <div>
-      <Navigation navActive={props.navActive} />
-      {props.children}
-    </div>
-  )
+class Layout extends React.Component {
+  render() {
+    return (
+      <div>
+        <Navigation navActive={this.props.navActive} />
+        {this.props.children}
+      </div>
+    )
+  }
 }
 
+export default Layout
