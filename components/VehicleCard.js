@@ -9,6 +9,10 @@ import Row from 'react-bootstrap/Row'
 
 class VehicleCard extends React.Component {
   render() {
+    let buy = false
+    if (this.props.buy)
+      buy = true
+
     const listing = this.props.listing
     const firstDetailCol = {
       "miles": "Miles",
@@ -42,11 +46,9 @@ class VehicleCard extends React.Component {
           <Card.Text>
             <span className="text-muted">{listing.miles} miles</span>
           </Card.Text>
-          <Button variant="primary">
-            Buy Now
-          </Button>
+          {buy ? <a className="btn btn-primary" href={`/buy/${listing.id}`}>Buy Now</a> : ""}
         </Card.Body>
-        <Card.Footer as="a" href={`#collapse${listing.id.toString()}`} data-toggle="collapse" aria-expanded="false" aria-controls="collapseInfo" className="d-flex justify-content-center">
+        <Card.Footer as="a" href={`#collapse${listing.id.toString()}`} data-toggle="collapse" aria-expanded="false" aria-controls={`collapse${listing.id.toString()}`} className="d-flex justify-content-center">
           <i className="fas fa-chevron-circle-down fa-lg"></i>
         </Card.Footer>
         <div className="collapse" id={`collapse${listing.id.toString()}`}>
@@ -58,7 +60,7 @@ class VehicleCard extends React.Component {
                     {Object.keys(firstDetailCol).map(function (key) {
                       if (key in listing) {
                         return (
-                        <ListGroup.Item className="d-flex justify-content-between">
+                        <ListGroup.Item key={key} className="d-flex justify-content-between">
                           <span className="text-muted">{firstDetailCol[key]}</span>
                           <span>{listing[key]}</span>
                         </ListGroup.Item>
@@ -71,7 +73,7 @@ class VehicleCard extends React.Component {
                     {Object.keys(secondDetailCol).map(function (key) {
                       if (key in listing) {
                         return (
-                          <ListGroup.Item className="d-flex justify-content-between">
+                          <ListGroup.Item key={key} className="d-flex justify-content-between">
                             <span className="text-muted">{secondDetailCol[key]}</span>
                             <span>{listing[key]}</span>
                           </ListGroup.Item>

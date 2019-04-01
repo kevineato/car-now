@@ -16,6 +16,7 @@
     "next": "^8.0.3",
     "react": "^16.8.5",
     "react-bootstrap": "^1.0.0-beta.6",
-    "react-dom": "^16.8.5"
+    "react-dom": "^16.8.5",
+    "react-search-input": "^0.11.3"
   }
 }

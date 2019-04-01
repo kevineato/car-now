@@ -4,11 +4,17 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import fetch from 'isomorphic-unfetch'
 import React from 'react'
+import Router from 'next/router'
 
 class Index extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { randIds: [] }
+    this.state = {
+      randIds: [],
+      searchText: ""
+    }
+
+    this.submitSearch = this.submitSearch.bind(this)
   }
 
   componentDidMount() {
@@ -29,6 +35,10 @@ class Index extends React.Component {
     this.setState({ randIds: randomIds })
   }
 
+  submitSearch() {
+    Router.push(`/search/${this.state.searchText}`)
+  }
+
   static async getInitialProps() {
     const res = await fetch('http://localhost:3000/static/data.json')
     const data = await res.json()
@@ -47,14 +57,13 @@ class Index extends React.Component {
   }
 
   render () {
-
     return (
       <Container>
         <Row className="justify-content-center">
           <Col>
             <Carousel>
               {this.state.randIds.map((id) => (
-                <Carousel.Item>
+                <Carousel.Item key={id.toString()}>
                   <a href={`/v/${parseInt(id) + 1}`}>
                     <img
                       className="w-100"
@@ -69,6 +78,17 @@ class Index extends React.Component {
               ))}
             </Carousel>
           </Col>
+        </Row>
+        <Row className="mt-5 justify-content-center">
+          <form onSubmit={() => Router.push(`/browse/${this.state.searchText}`)}>
+            <div className="input-group">
+              <input type="text" className="form-control" name="searchText" placeholder="Search"
+                     aria-label="Search" aria-describedby="search" onChange={(e) => this.setState({ searchText: e.currentTarget.value })} value={this.state.searchText} />
+              <div className="input-group-append">
+                <button className="btn btn-primary" type="submit" id="search"><i className="fas fa-search"></i></button>
+              </div>
+            </div>
+          </form>
         </Row>
       </Container>
     )

@@ -26,6 +26,31 @@ app
       app.render(req, res, actualPage, queryParams)
     })
 
+    server.get('/buy/:id', async (req, res) => {
+      const actualPage = '/buy'
+
+      const resp = await fetch('http://localhost:3000/static/data.json')
+      const data = await resp.json()
+
+      const vehicle = JSON.stringify(data.listings[parseInt(req.params.id) - 1])
+
+      const queryParams = {
+        id: req.params.id,
+        listing: vehicle
+      }
+
+      app.render(req, res, actualPage, queryParams)
+    })
+
+    server.get('/browse/:searchText', (req, res) => {
+      const actualPage = '/browse'
+      const queryParams = {
+        searchText: req.params.searchText
+      }
+
+      app.render(req, res, actualPage, queryParams)
+    })
+
     server.get('*', (req, res) => {
       return handle(req, res)
     })
