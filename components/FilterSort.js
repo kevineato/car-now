@@ -1,3 +1,4 @@
+import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import React from 'react'
@@ -11,6 +12,7 @@ class FilterSort extends React.Component {
     this.handleMakeChecked = this.handleMakeChecked.bind(this)
     this.handleModelChecked = this.handleModelChecked.bind(this)
     this.handleSortBy = this.handleSortBy.bind(this)
+    this.handleClearFilters = this.handleClearFilters.bind(this)
   }
 
   handleDirection(e) {
@@ -31,6 +33,10 @@ class FilterSort extends React.Component {
 
   handleSortBy(e) {
     this.props.onSortByChange(e.currentTarget.value)
+  }
+
+  handleClearFilters() {
+    this.props.onClearFilters()
   }
 
   getMakeModelsCheckboxes(makeModels) {
@@ -60,11 +66,15 @@ class FilterSort extends React.Component {
     else
       descDirection = true
 
+    let clearButton = null
+    if (this.props.shouldDisplayButton)
+      clearButton = <Button className="btn-danger mb-3" onClick={this.handleClearFilters}><i className="fas fa-times"></i> Clear</Button>
 
     return (
       <Card className="my-3" style={{ boxShadow: '7px 5px 20px' }}>
         <Card.Body>
           <Form>
+            {clearButton}
             <Form.Group controlId="formSortBy">
               <Form.Label><h5>Sort By</h5></Form.Label>
               <Form.Control onChange={this.handleSortBy} as="select">

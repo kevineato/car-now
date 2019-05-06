@@ -20,6 +20,7 @@ class Browse extends React.Component {
     this.handleModelChecked = this.handleModelChecked.bind(this)
     this.handleSearchUpdated = this.handleSearchUpdated.bind(this)
     this.handleSortByChanged = this.handleSortByChanged.bind(this)
+    this.handleClearFilters = this.handleClearFilters.bind(this)
 
     this.state = {
       filterYears: [],
@@ -27,7 +28,8 @@ class Browse extends React.Component {
       filterMakes: [],
       sortBy: "price",
       direction: "ascending",
-      searchText: this.props.router.query.searchText || ""
+      searchText: this.props.router.query.searchText || "",
+      displayClearButton: (this.props.router.query.searchText) ? true : false
     }
   }
 
@@ -45,7 +47,6 @@ class Browse extends React.Component {
     let filterModels = []
     let sortBy = "price"
     let direction = "ascending"
-    let searchText = this.props.router.query.searchText || ""
     if (sessionStorage.getItem("filterYears"))
       filterYears = sessionStorage.getItem("filterYears").split(",")
     if (sessionStorage.getItem("filterMakes"))
@@ -67,17 +68,19 @@ class Browse extends React.Component {
   }
 
   handleDirectionChange(value) {
-    this.setState({ direction: value.id })
+    this.setState({ direction: value.id, displayClearButton: true })
   }
 
   handleYearChecked(yearChecked, label) {
     if (yearChecked) {
       this.setState((prevState, props) => ({
-        filterYears: [...new Set([...prevState.filterYears, label])]
+        filterYears: [...new Set([...prevState.filterYears, label])],
+        displayClearButton: true
       }))
     } else {
       this.setState((prevState, props) => ({
-        filterYears: [...new Set(prevState.filterYears.filter(year => year !== label))]
+        filterYears: [...new Set(prevState.filterYears.filter(year => year !== label))],
+        displayClearButton: true
       }))
     }
   }
@@ -85,12 +88,14 @@ class Browse extends React.Component {
   handleMakeChecked(makeChecked, label) {
     if (makeChecked) {
       this.setState((prevState, props) => ({
-        filterMakes: [...new Set([...prevState.filterMakes, label])]
+        filterMakes: [...new Set([...prevState.filterMakes, label])],
+        displayClearButton: true
       }))
     } else {
       this.setState((prevState, props) => ({
         filterMakes: [...new Set(prevState.filterMakes.filter(make => make !== label))],
-        filterModels: [...new Set(prevState.filterModels.filter(model => this.props.makeModels[label].includes(model) === false))]
+        filterModels: [...new Set(prevState.filterModels.filter(model => this.props.makeModels[label].includes(model) === false))],
+        displayClearButton: true
       }))
     }
   }
@@ -98,21 +103,37 @@ class Browse extends React.Component {
   handleModelChecked(modelChecked, label) {
     if (modelChecked) {
       this.setState((prevState, props) => ({
-          filterModels: [...new Set([...prevState.filterModels, label])]
+          filterModels: [...new Set([...prevState.filterModels, label])],
+          displayClearButton: true
       }))
     } else {
       this.setState((prevState, props) => ({
-        filterModels: [...new Set(prevState.filterModels.filter(model => model !== label))]
+        filterModels: [...new Set(prevState.filterModels.filter(model => model !== label))],
+        displayClearButton: true
       }))
     }
   }
 
   handleSortByChanged(value) {
-    this.setState({ sortBy: value.toLowerCase() })
+    this.setState({ sortBy: value.toLowerCase(), displayClearButton: true })
   }
 
-  handleSearchUpdated(text) {
-    this.setState({ searchText: text })
+  handleSearchUpdated(e) {
+    this.setState({ searchText: e.currentTarget.value, displayClearButton: (e.currentTarget.value === "") ? false : true })
+  }
+
+  handleClearFilters() {
+    this.setState({
+      filterYears: [],
+      filterModels: [],
+      filterMakes: [],
+      sortBy: "price",
+      direction: "ascending",
+      searchText: "",
+      displayClearButton: false
+    })
+
+    this.props.router.push("http://localhost:300/browse")
   }
 
   static async getInitialProps() {
@@ -183,7 +204,8 @@ class Browse extends React.Component {
     return (
       <Container fluid={true}>
         <Row>
-          <Col xl={2}>
+          <Col xl={3}>
+            <a className="btn btn-sm ml-2 d-xl-none btn-outline-dark my-3" href="#collapseFilters" data-toggle="collapse" aria-expanded="false" aria-controls="collapseFilters">Filters</a>
             <div className="collapse d-xl-block" id="collapseFilters">
               <FilterSort
                 years={this.props.years}
@@ -196,17 +218,20 @@ class Browse extends React.Component {
                 onMakeCheckedChange={this.handleMakeChecked}
                 onModelCheckedChange={this.handleModelChecked}
                 onSortByChange={this.handleSortByChanged}
+                onClearFilters={this.handleClearFilters}
                 makeModels={this.props.makeModels}
+                shouldDisplayButton={this.state.displayClearButton}
               />
             </div>
           </Col>
-          <Col xl={10}>
-            <div className="input-group mt-3 ml-3">
-              <div className="input-group-prepend">
-                <span className="input-group-text" id="search"><i className="fas fa-search"></i></span>
+          <Col xl={9}>
+            <SearchInput className="d-none search-input" inputClassName="d-none" placeholder="Search" aria-label="Search" aria-describedby="search" value={this.state.searchText} />
+            <div className="input-group ml-2 my-xl-3 w-50">
+              <input type="text" className="form-control" name="searchText" placeholder="Search"
+                     aria-label="Search" aria-describedby="search" onChange={this.handleSearchUpdated} value={this.state.searchText} />
+              <div className="input-group-append">
+                <button className="btn btn-primary" type="submit" id="search"><i className="fas fa-search"></i></button>
               </div>
-              <SearchInput className="search-input" inputClassName="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" onChange={this.handleSearchUpdated} value={this.state.searchText} />
-                <a className="btn d-xl-none btn-outline-dark mx-auto" href="#collapseFilters" data-toggle="collapse" aria-expanded="false" aria-controls="collapseFilters">Filters</a>
             </div>
             <Container fluid={true}>
               <Row>

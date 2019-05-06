@@ -65,7 +65,7 @@ class Vehicle extends React.Component {
               </ListGroup>
             </Col>
             <Col>
-              <Row className="mt-5 mr-auto">
+              <Row className="mt-5 mr-auto mb-5">
                 <a className="btn btn-primary ml-auto" href={`/buy/${listing.id}`}>Buy Now</a>
               </Row>
             </Col>

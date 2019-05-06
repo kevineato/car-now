@@ -13,8 +13,6 @@ class Index extends React.Component {
       randIds: [],
       searchText: ""
     }
-
-    this.submitSearch = this.submitSearch.bind(this)
   }
 
   componentDidMount() {
@@ -33,10 +31,6 @@ class Index extends React.Component {
     }
 
     this.setState({ randIds: randomIds })
-  }
-
-  submitSearch() {
-    Router.push(`/search/${this.state.searchText}`)
   }
 
   static async getInitialProps() {
@@ -78,17 +72,6 @@ class Index extends React.Component {
               ))}
             </Carousel>
           </Col>
-        </Row>
-        <Row className="mt-5 justify-content-center">
-          <form onSubmit={() => Router.push(`/browse/${this.state.searchText}`)}>
-            <div className="input-group">
-              <input type="text" className="form-control" name="searchText" placeholder="Search"
-                     aria-label="Search" aria-describedby="search" onChange={(e) => this.setState({ searchText: e.currentTarget.value })} value={this.state.searchText} />
-              <div className="input-group-append">
-                <button className="btn btn-primary" type="submit" id="search"><i className="fas fa-search"></i></button>
-              </div>
-            </div>
-          </form>
         </Row>
       </Container>
     )
