@@ -39,6 +39,7 @@ class Browse extends React.Component {
     sessionStorage.setItem("filterModels", this.state.filterModels.toString())
     sessionStorage.setItem("sortBy", this.state.sortBy)
     sessionStorage.setItem("direction", this.state.direction)
+    sessionStorage.setItem("displayClearButton", this.state.displayClearButton.toString())
   }
 
   componentDidMount() {
@@ -47,6 +48,7 @@ class Browse extends React.Component {
     let filterModels = []
     let sortBy = "price"
     let direction = "ascending"
+    let displayClearButton = false
     if (sessionStorage.getItem("filterYears"))
       filterYears = sessionStorage.getItem("filterYears").split(",")
     if (sessionStorage.getItem("filterMakes"))
@@ -57,13 +59,16 @@ class Browse extends React.Component {
       sortBy = sessionStorage.getItem("sortBy")
     if (sessionStorage.getItem("direction"))
       direction = sessionStorage.getItem("direction")
+    if (sessionStorage.getItem("displayClearButton"))
+      displayClearButton = sessionStorage.getItem("displayClearButton") === "true" ? true : false
 
     this.setState({
       filterYears: filterYears,
       filterMakes: filterMakes,
       filterModels: filterModels,
       sortBy: sortBy,
-      direction: direction
+      direction: direction,
+      displayClearButton: displayClearButton
     })
   }
 
@@ -182,24 +187,36 @@ class Browse extends React.Component {
     const searchListings = this.props.listings.filter(createFilter(this.state.searchText, FILTER_KEYS))
 
     const filterIds = []
-    const listings = searchListings.length === 0 ? this.props.listings : searchListings
-    listings.forEach((listing) => {
-      if (this.state.filterYears.includes(listing.year))
-        filterIds.push(listing.id)
-      else if (this.state.filterMakes.includes(listing.make) && this.state.filterModels.includes(listing.model))
-        filterIds.push(listing.id)
-      else if (this.state.filterMakes.includes(listing.make) && this.props.makeModels[listing.make].every((model) => this.state.filterModels.includes(model) === false))
-        filterIds.push(listing.id)
-      else if (this.state.filterYears.length === 0 && this.state.filterMakes.length === 0 && this.state.filterModels.length === 0)
-        filterIds.push(listing.id)
-    })
+    const listings = searchListings.length === 0 ? (this.state.searchText.length === 0 ? this.props.listings : null) : searchListings
+    if (listings != null) {
+      listings.forEach((listing) => {
+        if (this.state.filterYears.length !== 0) {
+          if (this.state.filterYears.includes(listing.year) && this.state.filterMakes.length !== 0) {
+            if (this.state.filterModels.length === 0 && this.state.filterYears.includes(listing.year) && this.state.filterMakes.includes(listing.make))
+              filterIds.push(listing.id)
+            else if (this.state.filterModels.length !== 0 && this.state.filterYears.includes(listing.year) && this.state.filterMakes.includes(listing.make) && this.state.filterModels.includes(listing.model))
+              filterIds.push(listing.id)
+          }
+          else if (this.state.filterYears.includes(listing.year) && this.state.filterMakes.length === 0)
+            filterIds.push(listing.id)
+        }
+        else if (this.state.filterMakes.includes(listing.make) && this.state.filterModels.includes(listing.model))
+          filterIds.push(listing.id)
+        else if (this.state.filterMakes.includes(listing.make) && this.props.makeModels[listing.make].every((model) => this.state.filterModels.includes(model) === false))
+          filterIds.push(listing.id)
+        else if (this.state.filterYears.length === 0 && this.state.filterMakes.length === 0 && this.state.filterModels.length === 0)
+          filterIds.push(listing.id)
+      })
+    }
 
-    listings.sort((a, b) => {
-      if (this.state.direction === "ascending")
-        return parseInt(a[this.state.sortBy].replace(",", "")) - parseInt(b[this.state.sortBy].replace(",", ""))
+    if (listings != null) {
+      listings.sort((a, b) => {
+        if (this.state.direction === "ascending")
+          return parseInt(a[this.state.sortBy].replace(",", "")) - parseInt(b[this.state.sortBy].replace(",", ""))
 
-      return parseInt(b[this.state.sortBy].replace(",", "")) - parseInt(a[this.state.sortBy].replace(",", ""))
-    })
+        return parseInt(b[this.state.sortBy].replace(",", "")) - parseInt(a[this.state.sortBy].replace(",", ""))
+      })
+    }
 
     return (
       <Container fluid={true}>
@@ -235,14 +252,14 @@ class Browse extends React.Component {
             </div>
             <Container fluid={true}>
               <Row>
-                {listings.map((listing) => {
+                {(listings != null) ? listings.map((listing) => {
                   if (filterIds.includes(listing.id))
                   return (
                     <Col key={listing.id.toString()} xl={6}>
                       <VehicleCard buy listing={listing} />
                     </Col>
                   )
-                })}
+                }) : null}
               </Row>
             </Container>
           </Col>
